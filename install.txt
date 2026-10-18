@@ -1,0 +1,3 @@
+source .venv/bin/activate
+python --version
+python -m pip install gurobipy==13.0.3
