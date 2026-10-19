@@ -1,0 +1,17 @@
+{
+  "synthetic": true,
+  "flight_count": 3000,
+  "airport_count": 6,
+  "flights_per_arrival_airport": 500,
+  "continued_percent": 40,
+  "period_count": 64,
+  "minutes_per_period": 15,
+  "flight_time_periods": 2,
+  "max_delay_periods": 4,
+  "departure_capacity_per_period": 20,
+  "arrival_capacity_per_period": 20,
+  "ground_cost_per_period": 50,
+  "air_cost_per_period": 75,
+  "source": "Bertsimas and Stock Patterson (1998), Tables I-II: scenario settings only",
+  "note": "Schedules and connections are synthetic; published outcomes are not expected."
+}
