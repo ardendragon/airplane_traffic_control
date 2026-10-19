@@ -1,6 +1,7 @@
 # Second Gurobi Project: Basic Airplane Variables and Constraints
 
 ## Synthetic ground-holding test cases
+*See the [Table V and VI results](generated_cases/table_v_vi_results.md).*
 
 `ground_holding_cases.py` generates the eight cases in the published scenario
 table: 1,000 flights at 20%, 40%, 60%, or 80% continuation (with capacities
@@ -70,6 +71,8 @@ python second_gurobi_project/air_traffic_flow_management.py
 
 Without `--case-dir`, the model imports a three-flight example from `mock_data.py`.
 
+
+## Summary notes/formulations from paper
 
 
 ```
