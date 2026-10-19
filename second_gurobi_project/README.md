@@ -72,7 +72,7 @@ Without `--case-dir`, the model imports a three-flight example from `mock_data.p
 
 
 
-
+```
 Beginning Variables:
 set of flights
 F = {
@@ -206,7 +206,7 @@ for f in F:
 			model.addconstr(
 				w[f][j][f.T[-1]] == 1
 			)
-
+```
 
 
 
