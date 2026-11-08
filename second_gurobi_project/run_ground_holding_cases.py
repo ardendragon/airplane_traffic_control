@@ -29,6 +29,7 @@ FIELDS = (
     "continued_percent",
     "departure_capacity",
     "arrival_capacity",
+    "last_scheduled_departure",
     "status",
     "objective",
     "solver_seconds",
@@ -48,6 +49,10 @@ def run_cases(root: Path, baseline_only: bool, time_limit: float | None) -> list
     rows = []
     for (flights, continued_percent), baseline in CASE_SPECS.items():
         directory = case_path(root, flights, continued_percent)
+        with (directory / "flights.csv").open(newline="") as stream:
+            last_scheduled_departure = max(
+                int(flight["scheduled_departure"]) for flight in csv.DictReader(stream)
+            )
         capacity_pairs = (
             (baseline,) if baseline_only else CAPACITY_SWEEPS[flights, continued_percent]
         )
@@ -65,6 +70,7 @@ def run_cases(root: Path, baseline_only: bool, time_limit: float | None) -> list
                 "continued_percent": continued_percent,
                 "departure_capacity": departure_capacity,
                 "arrival_capacity": arrival_capacity,
+                "last_scheduled_departure": last_scheduled_departure,
                 **result,
             }
             rows.append(row)
@@ -81,8 +87,8 @@ def markdown_table(rows: list[dict], flights: int) -> str:
     lines = [
         f"## {'Table V' if flights == 1000 else 'Table VI'} style: {flights:,} flights",
         "",
-        "| Flights | Continued | Dep. capacity | Arr. capacity | LP objective | Solver time (s) | Noninteger flights | Status |",
-        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- |",
+        "| Flights | Continued | Dep. capacity | Arr. capacity | Last scheduled departure (period) | LP objective | Solver time (s) | Noninteger flights | Status |",
+        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- |",
     ]
     for row in rows:
         if row["flights"] != flights:
@@ -99,7 +105,7 @@ def markdown_table(rows: list[dict], flights: int) -> str:
         )
         lines.append(
             f"| {row['flights']:,} | {row['continued_percent']}% | "
-            f"{row['departure_capacity']} | {row['arrival_capacity']} | "
+            f"{row['departure_capacity']} | {row['arrival_capacity']} | {row['last_scheduled_departure']} | "
             f"{objective} | {row['solver_seconds']:.2f} | "
             f"{noninteger} | {row['status']} |"
         )
@@ -128,7 +134,7 @@ def main() -> None:
     )
     csv_path = output_prefix.with_suffix(".csv")
     with csv_path.open("w", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=FIELDS)
+        writer = csv.DictWriter(stream, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -136,6 +142,7 @@ def main() -> None:
         [
             "# Synthetic ground-holding LP results",
             "These are new synthetic instances. Capacity levels follow the 1998 tables; objectives, feasibility, and fractional-flight percentages need not match the paper.",
+            "Last scheduled departure is the latest scheduled takeoff period in that case's input flights. Each period is 15 minutes; all cases use periods 0–63.",
             markdown_table(rows, 1000),
             markdown_table(rows, 3000),
         ]

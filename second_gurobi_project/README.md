@@ -2,6 +2,7 @@
 
 ## Synthetic ground-holding test cases
 *See the [Table V and VI results](./generated_cases/GHP/table_v_vi_results.md).*
+*the [Result Analysis](./result_analysis.md).*
 
 `ground_holding_cases.py` generates the eight cases in the published scenario
 table: 1,000 flights at 20%, 40%, 60%, or 80% continuation (with capacities
@@ -63,7 +64,9 @@ scheduled slack used in the 1994 experiment.
 
 ## Synthetic TFMP test cases
 
-Click [here](./generated_cases/TFMP/tfmp_results.md) for results. 
+Click [here](./generated_cases/TFMP/tfmp_results.md) for results.
+
+*the [Result Analysis](./result_analysis.md).* 
 
 `tfmp_cases.py` creates four cases with 20%, 40%, 60%, and 80% connected
 flights. each case has **24 hours in 144
