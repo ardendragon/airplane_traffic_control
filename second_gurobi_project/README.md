@@ -100,16 +100,6 @@ under `generated_cases/TFMP/`. Each case contains `flights.csv`, `connections.cs
 `capacities.csv`, `sectors.csv`, and `scenario.json`. You can also run one case
 directly with `air_traffic_flow_management.py --case-dir`.
 
-## Small mock case and model notes
-
-run: 
-```bash
-source .venv/bin/activate
-python second_gurobi_project/air_traffic_flow_management.py
-```
-
-Without `--case-dir`, the model imports a three-flight example from `mock_data.py`.
-
 ### Four-flight two-airport example
 
 Run the case in `four_flight_tfmp_case.py` with:
@@ -117,7 +107,13 @@ Run the case in `four_flight_tfmp_case.py` with:
 ```bash
 python second_gurobi_project/air_traffic_flow_management.py --example four-flight
 ```
-four flights, two airports, three sectors in between, with a limited sector capicity. If air delay isn't implemented it is infeasible for scheduling. o/w optimal solution has cost 4, delaying 2 planes by 2 time units.
+four flights, two airports, three sectors in between, with a limited sector capicity of 2. Ground delay is prohibited. 
+
+* Delaying 2 planes by 2 time units to avoid going over sector capacity is optimal solution of cost 4. 
+* If air delay isn't implemented it is infeasible for scheduling.
+* result is as expected of 4. 
+
+Details of Setup:
 
 * Periods are 0 through 8. 
 * F0 and F1 fly K0 → J0 → J1 → J2 → K1;
@@ -131,6 +127,16 @@ four flights, two airports, three sectors in between, with a limited sector capi
 * There are no aircraft connections are
 * The optimal objective is **4**.
 
+# appendix:
+## Small mock case and model notes
+
+run: 
+```bash
+source .venv/bin/activate
+python second_gurobi_project/air_traffic_flow_management.py
+```
+
+Without `--case-dir`, the model imports a three-flight example from `mock_data.py`.
 
 ## Summary notes/formulations from paper
 
