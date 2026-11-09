@@ -267,7 +267,7 @@ def load_case(directory: Path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", type=Path, default=Path(__file__).parent / "generated_cases")
+    parser.add_argument("--output-dir", type=Path, default=Path(__file__).parent / "generated_cases" / "GHP")
     parser.add_argument("--flights", type=int, choices=(1000, 3000))
     parser.add_argument("--continued", type=int, choices=(20, 40, 60, 80))
     args = parser.parse_args()

@@ -111,7 +111,7 @@ def main() -> None:
     parser.add_argument(
         "--case-root",
         type=Path,
-        default=Path(__file__).parent / "generated_cases",
+        default=Path(__file__).parent / "generated_cases" / "GHP",
         help="Directory holding the eight generated cases",
     )
     parser.add_argument(

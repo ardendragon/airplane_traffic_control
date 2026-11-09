@@ -1,7 +1,7 @@
 # Second Gurobi Project: Basic Airplane Variables and Constraints
 
 ## Synthetic ground-holding test cases
-*See the [Table V and VI results](generated_cases/table_v_vi_results.md).*
+*See the [Table V and VI results](./generated_cases/GHP/table_v_vi_results.md).*
 
 `ground_holding_cases.py` generates the eight cases in the published scenario
 table: 1,000 flights at 20%, 40%, 60%, or 80% continuation (with capacities
@@ -35,7 +35,7 @@ Run a generated case as a binary program, or use `--relax` for the LP relaxation
 
 ```bash
 source .venv/bin/activate
-python second_gurobi_project/air_traffic_flow_management.py --case-dir second_gurobi_project/generated_cases/1000_flights_40pct --relax
+python second_gurobi_project/air_traffic_flow_management.py --case-dir second_gurobi_project/generated_cases/GHP/1000_flights_40pct --relax
 ```
 
 The LP command reports the number of flights with at least one fractional
@@ -53,7 +53,7 @@ python second_gurobi_project/run_ground_holding_cases.py
 
 The runner generates any missing synthetic cases, solves the LP relaxation at
 each of the 27 capacity combinations, and writes `table_v_vi_results.csv` and
-`table_v_vi_results.md` under `second_gurobi_project/generated_cases/`.
+`table_v_vi_results.md` under `second_gurobi_project/generated_cases/GHP/`.
 Use `--baseline-only` for the eight capacity pairs from Tables I and II, or
 `--time-limit 60` for a per-solve limit. `solver_seconds` measures Gurobi solve
 time, excluding Python model construction and CSV loading. These numbers are
@@ -63,8 +63,10 @@ scheduled slack used in the 1994 experiment.
 
 ## Synthetic TFMP test cases
 
+Click [here](./generated_cases/TFMP/tfmp_results.md) for results. 
+
 `tfmp_cases.py` creates four cases with 20%, 40%, 60%, and 80% connected
-flights. Following the clarified settings, each case has **24 hours in 144
+flights. each case has **24 hours in 144
 ten-minute periods** and **1,500 flights**, with 500 arrivals at each of A0,
 A1, and A2. Each airport has departure and arrival capacity 30 per period.
 The six directed routes use J0 between A0/A1, J1 between A0/A2, and J2
@@ -93,8 +95,8 @@ python second_gurobi_project/run_tfmp_cases.py
 ```
 
 This writes four `tfmp_1500_flights_*pct` directories and a
-[TFMP results table](generated_cases/tfmp_results.md) (also as `tfmp_results.csv`)
-under `generated_cases/`. Each case contains `flights.csv`, `connections.csv`,
+[TFMP results table](generated_cases/TFMP/tfmp_results.md) (also as `tfmp_results.csv`)
+under `generated_cases/TFMP/`. Each case contains `flights.csv`, `connections.csv`,
 `capacities.csv`, `sectors.csv`, and `scenario.json`. You can also run one case
 directly with `air_traffic_flow_management.py --case-dir`.
 
@@ -115,15 +117,19 @@ Run the case in `four_flight_tfmp_case.py` with:
 ```bash
 python second_gurobi_project/air_traffic_flow_management.py --example four-flight
 ```
+four flights, two airports, three sectors in between, with a limited sector capicity. If air delay isn't implemented it is infeasible for scheduling. o/w optimal solution has cost 4, delaying 2 planes by 2 time units.
 
-Periods are 0 through 8. F0 and F1 fly K0 → J0 → J1 → J2 → K1;
-F2 and F3 fly the reverse route. All depart at time 0. Each airport's
-arrival and departure capacity, and each sector's occupancy capacity, is 2
-per period. Sector travel takes at least 2 periods, so the scheduled arrival
-is time 6. Departures are fixed at time 0 to prohibit ground delay; airborne
-delay costs 1 per period. Arrival is allowed through time 8, giving each
-flight at most 2 periods of airborne delay. No aircraft connections are
-specified. The optimal objective is **4**.
+* Periods are 0 through 8. 
+* F0 and F1 fly K0 → J0 → J1 → J2 → K1;
+* F2 and F3 fly the reverse route. 
+* All depart at time 0. 
+* Each airport's arrival and departure capacity, and each sector's occupancy capacity, is 2 per period. 
+* Sector travel takes at least 2 periods, so the scheduled arrival is time 6. 
+* Departures are fixed at time 0 to prohibit ground delay; 
+* airborne delay costs 1 per period.
+* Arrival is allowed through time 8, giving each flight at most 2 periods of airborne delay. 
+* There are no aircraft connections are
+* The optimal objective is **4**.
 
 
 ## Summary notes/formulations from paper

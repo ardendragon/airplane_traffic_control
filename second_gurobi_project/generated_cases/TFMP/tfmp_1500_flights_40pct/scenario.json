@@ -1,0 +1,19 @@
+{
+  "kind": "tfmp",
+  "synthetic": true,
+  "flight_count": 1500,
+  "arrivals_per_airport": 500,
+  "continued_percent": 40,
+  "period_count": 144,
+  "minutes_per_period": 10,
+  "airport_capacity": 30,
+  "sector_capacity": 30,
+  "sector_travel_time": 8,
+  "max_ground_delay": 4,
+  "max_air_delay": 2,
+  "min_turnaround": 3,
+  "ground_cost": 50,
+  "air_cost": 75,
+  "origin_to_sector_time": 0,
+  "note": "Chains are built before scheduled times; each link has zero scheduled slack. Lower shares use earlier rotations. The witness has ground delay only."
+}
