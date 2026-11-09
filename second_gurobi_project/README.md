@@ -61,6 +61,43 @@ not comparable to the paper's CPU times on its hardware. The current generator
 uses one period of minimum turnaround, which does not ensure the one period of
 scheduled slack used in the 1994 experiment.
 
+## Synthetic TFMP test cases
+
+`tfmp_cases.py` creates four cases with 20%, 40%, 60%, and 80% connected
+flights. Following the clarified settings, each case has **24 hours in 144
+ten-minute periods** and **1,500 flights**, with 500 arrivals at each of A0,
+A1, and A2. Each airport has departure and arrival capacity 30 per period.
+The six directed routes use J0 between A0/A1, J1 between A0/A2, and J2
+between A1/A2. Each sector takes eight periods to traverse and holds at most
+30 aircraft at a time.
+
+The generator uses a **minimum** three-period turnaround for connected flights,
+ground-delay cost 50, air-delay cost 75, and a two-period maximum air delay.
+Because no ground-delay limit was specified for these new cases, it carries
+over the earlier four-period limit. A flight enters its sector at departure
+(zero extra travel time from the airport to the sector). Sector and arrival
+time windows allow four periods of ground delay plus two periods of air delay;
+the model also explicitly limits each flight's total air delay to two periods.
+The generated schedules have sector demand peaks, and the generator checks
+that a feasible schedule respects every airport, sector, and connection limit.
+It now builds the 80% aircraft chains before assigning scheduled times. Every
+connection has exactly three periods between the predecessor's scheduled
+arrival and the successor's scheduled departure, leaving zero scheduled slack.
+The four cases use identical flights and nested connection lists: lower shares
+include earlier aircraft rotations, and higher shares add later ones.
+
+Generate the cases and solve both their LP relaxations and binary models:
+
+```bash
+python second_gurobi_project/run_tfmp_cases.py
+```
+
+This writes four `tfmp_1500_flights_*pct` directories and a
+[TFMP results table](generated_cases/tfmp_results.md) (also as `tfmp_results.csv`)
+under `generated_cases/`. Each case contains `flights.csv`, `connections.csv`,
+`capacities.csv`, `sectors.csv`, and `scenario.json`. You can also run one case
+directly with `air_traffic_flow_management.py --case-dir`.
+
 ## Small mock case and model notes
 
 run: 
@@ -70,6 +107,23 @@ python second_gurobi_project/air_traffic_flow_management.py
 ```
 
 Without `--case-dir`, the model imports a three-flight example from `mock_data.py`.
+
+### Four-flight two-airport example
+
+Run the case in `four_flight_tfmp_case.py` with:
+
+```bash
+python second_gurobi_project/air_traffic_flow_management.py --example four-flight
+```
+
+Periods are 0 through 8. F0 and F1 fly K0 → J0 → J1 → J2 → K1;
+F2 and F3 fly the reverse route. All depart at time 0. Each airport's
+arrival and departure capacity, and each sector's occupancy capacity, is 2
+per period. Sector travel takes at least 2 periods, so the scheduled arrival
+is time 6. Departures are fixed at time 0 to prohibit ground delay; airborne
+delay costs 1 per period. Arrival is allowed through time 8, giving each
+flight at most 2 periods of airborne delay. No aircraft connections are
+specified. The optimal objective is **4**.
 
 
 ## Summary notes/formulations from paper

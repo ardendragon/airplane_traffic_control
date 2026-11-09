@@ -6,7 +6,9 @@ import gurobipy as gp
 from gurobipy import GRB
 
 import mock_data
-from ground_holding_cases import load_case
+import four_flight_tfmp_case
+from ground_holding_cases import load_case as load_ground_holding_case
+from tfmp_cases import load_case as load_tfmp_case
 
 
 def main(
@@ -16,12 +18,17 @@ def main(
 	departure_capacity: int | None = None,
 	arrival_capacity: int | None = None,
 	quiet: bool = False,
+	example: str = "mock",
 ) -> dict:
-	F, J, K, L, T = (
-		load_case(case_dir)
-		if case_dir is not None
-		else (mock_data.F, mock_data.J, mock_data.K, mock_data.L, mock_data.T)
-	)
+	if example not in ("mock", "four-flight"):
+		raise ValueError(f"Unknown built-in example: {example}")
+	if case_dir is None:
+		data = four_flight_tfmp_case if example == "four-flight" else mock_data
+		F, J, K, L, T = data.F, data.J, data.K, data.L, data.T
+	else:
+		case_dir = Path(case_dir)
+		loader = load_tfmp_case if (case_dir / "sectors.csv").exists() else load_ground_holding_case
+		F, J, K, L, T = loader(case_dir)
 	model = gp.Model("air_traffic_flow_management")
 	if quiet:
 		model.Params.OutputFlag = 0
@@ -131,6 +138,8 @@ def main(
 			model.addConstr(
 				w[f, j, F[f]["T"][j][-1]] == 1
 			)
+		if "max_air_delay" in F[f]:
+			model.addConstr(a(f) <= F[f]["max_air_delay"])
 	#(6) flight connectivity
 	for ff, f in L:
 		k = F[f]["a1"]
@@ -175,10 +184,13 @@ def main(
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Solve the air traffic flow model.")
 	parser.add_argument("--case-dir", type=Path, help="Directory with generated CSV case files")
+	parser.add_argument("--example", choices=("mock", "four-flight"), default="mock", help="Built-in example to solve without --case-dir")
 	parser.add_argument("--relax", action="store_true", help="Solve the LP relaxation")
 	parser.add_argument("--time-limit", type=float, help="Solver time limit in seconds")
 	args = parser.parse_args()
-	main(args.case_dir, args.relax, args.time_limit)
+	if args.case_dir is not None and args.example != "mock":
+		parser.error("--case-dir and --example four-flight cannot be used together")
+	main(args.case_dir, args.relax, args.time_limit, example=args.example)
 
 
 
